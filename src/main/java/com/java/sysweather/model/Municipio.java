@@ -2,15 +2,20 @@ package com.java.sysweather.model;
 
 import java.util.List;
 
+import com.java.sysweather.model.enums.Clima;
+import com.java.sysweather.model.enums.Estado;
+import com.java.sysweather.model.enums.Regiao;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
@@ -34,24 +39,21 @@ public class Municipio {
     @Size(min = 2, max = 100, message = "O nome deve ter entre 2 e 100 caracteres.")
     private String nome;
 
-    @NotBlank(message = "O estado não pode estar em branco.")
-    @Size(min = 2, max = 2, message = "O estado deve conter a sigla de 2 letras (ex: SP, RJ).")
-    private String estado;
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "O estado é obrigatório.")
+    private Estado estado;
 
     @NotNull(message = "O número de habitantes é obrigatório.")
     @Positive(message = "O número de habitantes deve ser positivo.")
     private Integer numero_habitantes;
 
-    @NotBlank(message = "O clima não pode estar em branco.")
-    @Size(max = 50, message = "O tipo de clima deve ter no máximo 50 caracteres.")
-    private String clima;
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "O clima é obrigatório.")
+    private Clima clima;
 
-    @NotBlank(message = "A região não pode estar em branco.")
-    @Pattern(
-        regexp = "Norte|Nordeste|Centro-Oeste|Sudeste|Sul",
-        message = "A região deve ser uma das seguintes: Norte, Nordeste, Centro-Oeste, Sudeste, Sul."
-    )
-    private String regiao;
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "A região é obrigatório.")
+    private Regiao regiao;
 
     @NotNull(message = "A altitude é obrigatória.")
     @PositiveOrZero(message = "A altitude não pode ser negativa.")

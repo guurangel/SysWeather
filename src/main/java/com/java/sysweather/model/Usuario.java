@@ -2,24 +2,11 @@ package com.java.sysweather.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.*;
 
 @Builder
 @Data
@@ -27,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Usuario {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,6 +25,7 @@ public class Usuario {
 
     @NotBlank(message = "O e-mail é obrigatório")
     @Email(message = "E-mail inválido")
+    @Column(unique = true, nullable = false)
     private String email;
 
     @NotBlank(message = "A senha é obrigatória")
@@ -46,6 +34,7 @@ public class Usuario {
 
     @NotBlank(message = "O CPF é obrigatório")
     @Pattern(regexp = "\\d{11}", message = "O CPF deve conter 11 dígitos numéricos")
+    @Column(unique = true, nullable = false, updatable = false)
     private String cpf;
 
     @NotNull(message = "A data de nascimento é obrigatória")
@@ -58,4 +47,7 @@ public class Usuario {
     @ManyToOne(optional = false)
     @JoinColumn(name = "municipio_id", nullable = false)
     private Municipio municipio;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    private List<NotificacaoOcorrencia> notificacoes;
 }
