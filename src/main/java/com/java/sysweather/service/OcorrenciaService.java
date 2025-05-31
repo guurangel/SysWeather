@@ -45,6 +45,7 @@ public class OcorrenciaService {
         List<NotificacaoOcorrencia> notificacoes = usuarios.stream().map(usuario -> {
             NotificacaoOcorrencia n = new NotificacaoOcorrencia();
             n.setUsuario(usuario);
+            n.setOcorrencia(saved);  // <-- Associa a ocorrência aqui
             n.setMensagem("Nova ocorrência: " + saved.getTipo().name() +
                 " com risco " + saved.getNivelRisco().name() +
                 " no município " + saved.getMunicipio().getNome());

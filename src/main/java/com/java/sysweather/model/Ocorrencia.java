@@ -6,6 +6,9 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+import com.java.sysweather.model.enums.NivelRisco;
+import com.java.sysweather.model.enums.TipoOcorrencia;
+
 @Entity
 @Data
 @Builder
