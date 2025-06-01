@@ -1,6 +1,8 @@
 package com.java.sysweather.service;
 
+import com.java.sysweather.model.Municipio;
 import com.java.sysweather.model.Usuario;
+import com.java.sysweather.repository.MunicipioRepository;
 import com.java.sysweather.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,9 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private MunicipioRepository municipioRepository;  // precisa injetar
+
     public Usuario saveUsuario(Usuario usuario) {
         // Verificar se o CPF já existe
         if (usuarioRepository.existsByCpf(usuario.getCpf())) {
@@ -22,6 +27,15 @@ public class UsuarioService {
         // Verificar se o e-mail já existe
         if (usuarioRepository.existsByEmail(usuario.getEmail())) {
             throw new IllegalArgumentException("Já existe um usuário com esse e-mail.");
+        }
+
+        // Carregar municipio completo para garantir que estado não seja nulo
+        if (usuario.getMunicipio() != null && usuario.getMunicipio().getId() != null) {
+            Municipio municipio = municipioRepository.findById(usuario.getMunicipio().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Município não encontrado."));
+            usuario.setMunicipio(municipio);
+        } else {
+            usuario.setMunicipio(null);  // ou lance exceção se município for obrigatório
         }
 
         return usuarioRepository.save(usuario);
@@ -43,11 +57,19 @@ public class UsuarioService {
             throw new IllegalArgumentException("Já existe outro usuário com esse e-mail.");
         }
 
-        // Atualizar os campos permitidos
+        // Carregar municipio completo para garantir que estado não seja nulo
+        if (novoUsuario.getMunicipio() != null && novoUsuario.getMunicipio().getId() != null) {
+            Municipio municipio = municipioRepository.findById(novoUsuario.getMunicipio().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Município não encontrado."));
+            existente.setMunicipio(municipio);
+        } else {
+            existente.setMunicipio(null);  // ou lance exceção se município for obrigatório
+        }
+
+        // Atualizar os demais campos permitidos
         existente.setNome(novoUsuario.getNome());
         existente.setEmail(novoUsuario.getEmail());
         existente.setSenha(novoUsuario.getSenha());
-        existente.setMunicipio(novoUsuario.getMunicipio());
 
         return usuarioRepository.save(existente);
     }

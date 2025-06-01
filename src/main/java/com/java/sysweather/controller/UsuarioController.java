@@ -1,5 +1,7 @@
 package com.java.sysweather.controller;
 
+import com.java.sysweather.dto.response.UsuarioResponse;
+import com.java.sysweather.mapper.UsuarioMapper;
 import com.java.sysweather.model.Usuario;
 import com.java.sysweather.repository.UsuarioRepository;
 import com.java.sysweather.service.UsuarioService;
@@ -24,25 +26,29 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @GetMapping
-    public Page<Usuario> index(@PageableDefault(size = 10) Pageable pageable) {
-        return usuarioRepository.findAll(pageable);
+    public Page<UsuarioResponse> index(@PageableDefault(size = 10) Pageable pageable) {
+        Page<Usuario> usuarios = usuarioRepository.findAll(pageable);
+        // Mapear cada Usuario para UsuarioResponse
+        return usuarios.map(UsuarioMapper::toResponse);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Usuario create(@RequestBody @Valid Usuario usuario) {
-        return usuarioService.saveUsuario(usuario);
+    public UsuarioResponse create(@RequestBody @Valid Usuario usuario) {
+        Usuario saved = usuarioService.saveUsuario(usuario);
+        return UsuarioMapper.toResponse(saved);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Usuario> get(@PathVariable Long id) {
-        return ResponseEntity.ok(getUsuario(id));
+    public ResponseEntity<UsuarioResponse> get(@PathVariable Long id) {
+        Usuario usuario = getUsuario(id);
+        return ResponseEntity.ok(UsuarioMapper.toResponse(usuario));
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Usuario> update(@PathVariable Long id, @RequestBody @Valid Usuario usuario) {
+    public ResponseEntity<UsuarioResponse> update(@PathVariable Long id, @RequestBody @Valid Usuario usuario) {
         Usuario updated = usuarioService.updateUsuario(id, usuario);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(UsuarioMapper.toResponse(updated));
     }
 
     @DeleteMapping("{id}")

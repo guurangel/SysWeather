@@ -1,5 +1,7 @@
 package com.java.sysweather.controller;
 
+import com.java.sysweather.dto.response.MunicipioResumoResponse;
+import com.java.sysweather.mapper.MunicipioMapper;
 import com.java.sysweather.model.Municipio;
 import com.java.sysweather.repository.MunicipioRepository;
 import com.java.sysweather.service.MunicipioService;
@@ -24,25 +26,28 @@ public class MunicipioController {
     private MunicipioService municipioService;
 
     @GetMapping
-    public Page<Municipio> index(@PageableDefault(size = 10) Pageable pageable) {
-        return municipioRepository.findAll(pageable);
+    public Page<MunicipioResumoResponse> index(@PageableDefault(size = 10) Pageable pageable) {
+        return municipioRepository.findAll(pageable)
+            .map(MunicipioMapper::toResumo);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Municipio create(@RequestBody @Valid Municipio municipio) {
-        return municipioService.save(municipio);
+    public MunicipioResumoResponse create(@RequestBody @Valid Municipio municipio) {
+        Municipio saved = municipioService.save(municipio);
+        return MunicipioMapper.toResumo(saved);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Municipio> get(@PathVariable Long id) {
-        return ResponseEntity.ok(getMunicipio(id));
+    public ResponseEntity<MunicipioResumoResponse> get(@PathVariable Long id) {
+        Municipio municipio = getMunicipio(id);
+        return ResponseEntity.ok(MunicipioMapper.toResumo(municipio));
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Municipio> update(@PathVariable Long id, @RequestBody @Valid Municipio municipio) {
+    public ResponseEntity<MunicipioResumoResponse> update(@PathVariable Long id, @RequestBody @Valid Municipio municipio) {
         Municipio updated = municipioService.update(id, municipio);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(MunicipioMapper.toResumo(updated));
     }
 
     @DeleteMapping("{id}")
