@@ -5,8 +5,13 @@ import com.java.sysweather.mapper.MunicipioMapper;
 import com.java.sysweather.model.Municipio;
 import com.java.sysweather.repository.MunicipioRepository;
 import com.java.sysweather.service.MunicipioService;
+
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -26,13 +31,36 @@ public class MunicipioController {
     private MunicipioService municipioService;
 
     @GetMapping
+    @Cacheable(value = "municipios")
     public Page<MunicipioResumoResponse> index(@PageableDefault(size = 10) Pageable pageable) {
         return municipioRepository.findAll(pageable)
             .map(MunicipioMapper::toResumo);
     }
 
     @PostMapping
+    @CacheEvict(value = "municipios", allEntries = true)
     @ResponseStatus(HttpStatus.CREATED)
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        description = "Dados esperados para cadastrar um município no sistema.",
+        content = @Content(
+            mediaType = "application/json",
+            examples = @ExampleObject(
+                name = "Exemplo de município",
+                summary = "Exemplo de um município.",
+                value = """
+                    {
+                        "nome": "São Caetano do Sul",
+                        "estado": "SP",
+                        "numero_habitantes": 1774000,
+                        "clima": "SUBTROPICAL",
+                        "regiao": "SUDESTE",
+                        "altitude": 760,
+                        "areaKm2": 15.3
+                    }
+                """
+            )
+        )
+    )
     public MunicipioResumoResponse create(@RequestBody @Valid Municipio municipio) {
         Municipio saved = municipioService.save(municipio);
         return MunicipioMapper.toResumo(saved);
@@ -45,12 +73,35 @@ public class MunicipioController {
     }
 
     @PutMapping("{id}")
+    @CacheEvict(value = "municipios", allEntries = true)
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        description = "Dados esperados para alterar um município no sistema.",
+        content = @Content(
+            mediaType = "application/json",
+            examples = @ExampleObject(
+                name = "Exemplo de município",
+                summary = "Exemplo de um município.",
+                value = """
+                    {
+                        "nome": "dadosnovos: São Caetano do Sul",
+                        "estado": "SP",
+                        "numero_habitantes": 1774000,
+                        "clima": "SUBTROPICAL",
+                        "regiao": "SUDESTE",
+                        "altitude": 760,
+                        "areaKm2": 15.3
+                    }
+                """
+            )
+        )
+    )
     public ResponseEntity<MunicipioResumoResponse> update(@PathVariable Long id, @RequestBody @Valid Municipio municipio) {
         Municipio updated = municipioService.update(id, municipio);
         return ResponseEntity.ok(MunicipioMapper.toResumo(updated));
     }
 
     @DeleteMapping("{id}")
+    @CacheEvict(value = "municipios", allEntries = true)
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         Municipio municipio = getMunicipio(id);
         municipioRepository.delete(municipio);

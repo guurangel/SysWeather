@@ -5,8 +5,13 @@ import com.java.sysweather.mapper.UsuarioMapper;
 import com.java.sysweather.model.Usuario;
 import com.java.sysweather.repository.UsuarioRepository;
 import com.java.sysweather.service.UsuarioService;
+
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -26,6 +31,7 @@ public class UsuarioController {
     private UsuarioService usuarioService;
 
     @GetMapping
+    @Cacheable(value = "usuarios")
     public Page<UsuarioResponse> index(@PageableDefault(size = 10) Pageable pageable) {
         Page<Usuario> usuarios = usuarioRepository.findAll(pageable);
         // Mapear cada Usuario para UsuarioResponse
@@ -33,7 +39,31 @@ public class UsuarioController {
     }
 
     @PostMapping
+    @CacheEvict(value = "usuarios", allEntries = true)
     @ResponseStatus(HttpStatus.CREATED)
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        description = "Dados esperados para cadastrar um usuário no sistema.",
+        content = @Content(
+            mediaType = "application/json",
+            examples = @ExampleObject(
+                name = "Exemplo de usuário",
+                summary = "Exemplo de um usuário.",
+                value = """
+                    {
+                        "nome": "Teste",
+                        "email": "teste@gmail.com",
+                        "senha": "senha123",
+                        "cpf": "12345678901",
+                        "dataNascimento": "2000-01-22",
+                        "dataCadastro": "2025-06-01T15:00:00",
+                        "municipio": {
+                            "id": 1
+                        }
+                    }
+                """
+            )
+        )
+    )
     public UsuarioResponse create(@RequestBody @Valid Usuario usuario) {
         Usuario saved = usuarioService.saveUsuario(usuario);
         return UsuarioMapper.toResponse(saved);
@@ -46,12 +76,35 @@ public class UsuarioController {
     }
 
     @PutMapping("{id}")
+    @CacheEvict(value = "usuarios", allEntries = true)
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        description = "Dados esperados para alterar um usuário no sistema.",
+        content = @Content(
+            mediaType = "application/json",
+            examples = @ExampleObject(
+                name = "Exemplo de usuário",
+                summary = "Exemplo de um usuário.",
+                value = """
+                    {
+                        "nome": "AlterarTeste",
+                        "email": "teste@gmail.com",
+                        "senha": "senha123",
+                        "cpf": "12345678901",
+                        "municipio": {
+                            "id": 1
+                        }
+                    }
+                """
+            )
+        )
+    )
     public ResponseEntity<UsuarioResponse> update(@PathVariable Long id, @RequestBody @Valid Usuario usuario) {
         Usuario updated = usuarioService.updateUsuario(id, usuario);
         return ResponseEntity.ok(UsuarioMapper.toResponse(updated));
     }
 
     @DeleteMapping("{id}")
+    @CacheEvict(value = "usuarios", allEntries = true)
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         Usuario usuario = getUsuario(id);
         usuarioRepository.delete(usuario);

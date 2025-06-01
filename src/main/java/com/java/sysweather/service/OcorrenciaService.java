@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.java.sysweather.model.NotificacaoOcorrencia;
 import com.java.sysweather.model.Ocorrencia;
 import com.java.sysweather.model.Usuario;
+import com.java.sysweather.model.Municipio;
 import com.java.sysweather.repository.MunicipioRepository;
 import com.java.sysweather.repository.NotificacaoRepository;
 import com.java.sysweather.repository.OcorrenciaRepository;
@@ -31,9 +32,11 @@ public class OcorrenciaService {
 
     public Ocorrencia saveOcorrencia(Ocorrencia ocorrencia) {
         var municipioId = ocorrencia.getMunicipio().getId();
-        if (!municipioRepository.existsById(municipioId)) {
-            throw new IllegalArgumentException("Município associado não existe.");
-        }
+        Municipio municipio = municipioRepository.findById(municipioId)
+            .orElseThrow(() -> new IllegalArgumentException("Município associado não existe."));
+
+        // Garante que o município está completamente carregado
+        ocorrencia.setMunicipio(municipio);
 
         // Salvar a ocorrência
         Ocorrencia saved = ocorrenciaRepository.save(ocorrencia);
@@ -45,7 +48,7 @@ public class OcorrenciaService {
         List<NotificacaoOcorrencia> notificacoes = usuarios.stream().map(usuario -> {
             NotificacaoOcorrencia n = new NotificacaoOcorrencia();
             n.setUsuario(usuario);
-            n.setOcorrencia(saved);  // <-- Associa a ocorrência aqui
+            n.setOcorrencia(saved);
             n.setMensagem("Nova ocorrência: " + saved.getTipo().name() +
                 " com risco " + saved.getNivelRisco().name() +
                 " no município " + saved.getMunicipio().getNome());
@@ -66,18 +69,16 @@ public class OcorrenciaService {
 
         // Verificar se o município informado na nova ocorrência existe
         Long municipioId = novaOcorrencia.getMunicipio().getId();
-        if (!municipioRepository.existsById(municipioId)) {
-            throw new IllegalArgumentException("Município com ID " + municipioId + " não existe.");
-        }
+        Municipio municipio = municipioRepository.findById(municipioId)
+            .orElseThrow(() -> new IllegalArgumentException("Município com ID " + municipioId + " não existe."));
 
         // Atualizar os dados
         existente.setDescricao(novaOcorrencia.getDescricao());
         existente.setTipo(novaOcorrencia.getTipo());
         existente.setNivelRisco(novaOcorrencia.getNivelRisco());
         existente.setDataOcorrencia(novaOcorrencia.getDataOcorrencia());
-        existente.setMunicipio(novaOcorrencia.getMunicipio());
+        existente.setMunicipio(municipio); // garante que estado não será nulo
 
-        // Salvar e retornar a ocorrência atualizada
         return ocorrenciaRepository.save(existente);
     }
 }

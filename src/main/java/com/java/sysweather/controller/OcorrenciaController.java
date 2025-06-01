@@ -1,10 +1,17 @@
 package com.java.sysweather.controller;
 
+import com.java.sysweather.dto.response.OcorrenciaResponse;
+import com.java.sysweather.mapper.OcorrenciaMapper;
 import com.java.sysweather.model.Ocorrencia;
 import com.java.sysweather.repository.OcorrenciaRepository;
 import com.java.sysweather.service.OcorrenciaService;
+
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -24,32 +31,45 @@ public class OcorrenciaController {
     private OcorrenciaService ocorrenciaService;
 
     @GetMapping
-    public Page<Ocorrencia> index(@PageableDefault(size = 10) Pageable pageable) {
-        return ocorrenciaRepository.findAll(pageable);
+    @Cacheable(value = "ocorrencias")
+    public Page<OcorrenciaResponse> index(@PageableDefault(size = 10) Pageable pageable) {
+        return ocorrenciaRepository.findAll(pageable)
+                .map(OcorrenciaMapper::toResponse);
     }
 
     @PostMapping
+    @CacheEvict(value = "ocorrencias", allEntries = true)
     @ResponseStatus(HttpStatus.CREATED)
-    public Ocorrencia create(@RequestBody @Valid Ocorrencia ocorrencia) {
-        return ocorrenciaService.saveOcorrencia(ocorrencia);
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+        description = "Dados esperados para cadastrar uma ocorrência em um município do sistema.",
+        content = @Content(
+            mediaType = "application/json",
+            examples = @ExampleObject(
+                name = "Exemplo de uma ocorrência",
+                summary = "Exemplo de uma ocorrência.",
+                value = """
+                    {
+                        "descricao": "Deslizamento na região sul",
+                        "tipo": "DESLIZAMENTO",
+                        "nivelRisco": "MEDIO",
+                        "dataOcorrencia": "2025-06-01T20:35:00",
+                        "municipio": {
+                            "id": 4
+                        }
+                    }
+                """
+            )
+        )
+    )
+    public OcorrenciaResponse create(@RequestBody @Valid Ocorrencia ocorrencia) {
+        Ocorrencia nova = ocorrenciaService.saveOcorrencia(ocorrencia);
+        return OcorrenciaMapper.toResponse(nova);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Ocorrencia> get(@PathVariable Long id) {
-        return ResponseEntity.ok(getOcorrencia(id));
-    }
-
-    @PutMapping("{id}")
-    public ResponseEntity<Ocorrencia> update(@PathVariable Long id, @RequestBody @Valid Ocorrencia ocorrencia) {
-        Ocorrencia updated = ocorrenciaService.updateOcorrencia(id, ocorrencia);
-        return ResponseEntity.ok(updated);
-    }
-
-    @DeleteMapping("{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<OcorrenciaResponse> get(@PathVariable Long id) {
         Ocorrencia ocorrencia = getOcorrencia(id);
-        ocorrenciaRepository.delete(ocorrencia);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(OcorrenciaMapper.toResponse(ocorrencia));
     }
 
     private Ocorrencia getOcorrencia(Long id) {
