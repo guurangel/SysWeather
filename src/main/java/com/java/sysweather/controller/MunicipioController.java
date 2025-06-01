@@ -3,8 +3,11 @@ package com.java.sysweather.controller;
 import com.java.sysweather.dto.response.MunicipioResumoResponse;
 import com.java.sysweather.mapper.MunicipioMapper;
 import com.java.sysweather.model.Municipio;
+import com.java.sysweather.model.enums.Estado;
+import com.java.sysweather.model.enums.Regiao;
 import com.java.sysweather.repository.MunicipioRepository;
 import com.java.sysweather.service.MunicipioService;
+import com.java.sysweather.specification.MunicipioSpecification;
 
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -24,6 +27,21 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/municipios")
 public class MunicipioController {
 
+    public record MunicipioFilters(
+        String nome,
+        Estado estado,
+        Integer numeroHabitantes,
+        Integer numeroHabitantesMin,
+        Integer numeroHabitantesMax,
+        Regiao regiao,
+        Double areaKm2,
+        Double areaKm2Min,
+        Double areaKm2Max,
+        Double altitude,
+        Double altitudeMin,
+        Double altitudeMax
+    ) {}
+
     @Autowired
     private MunicipioRepository municipioRepository;
 
@@ -32,8 +50,11 @@ public class MunicipioController {
 
     @GetMapping
     @Cacheable(value = "municipios")
-    public Page<MunicipioResumoResponse> index(@PageableDefault(size = 10) Pageable pageable) {
-        return municipioRepository.findAll(pageable)
+    public Page<MunicipioResumoResponse> index(
+        @ModelAttribute MunicipioFilters filters,
+        @PageableDefault(size = 10) Pageable pageable
+    ) {
+        return municipioRepository.findAll(MunicipioSpecification.withFilters(filters), pageable)
             .map(MunicipioMapper::toResumo);
     }
 

@@ -5,7 +5,6 @@ import com.java.sysweather.mapper.NotificacaoMapper;
 import com.java.sysweather.model.NotificacaoOcorrencia;
 import com.java.sysweather.repository.NotificacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

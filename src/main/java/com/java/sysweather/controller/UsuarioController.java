@@ -5,10 +5,14 @@ import com.java.sysweather.mapper.UsuarioMapper;
 import com.java.sysweather.model.Usuario;
 import com.java.sysweather.repository.UsuarioRepository;
 import com.java.sysweather.service.UsuarioService;
+import com.java.sysweather.specification.UsuarioSpecification;
 
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import jakarta.validation.Valid;
+
+import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -24,6 +28,16 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/usuarios")
 public class UsuarioController {
 
+    public record UsuarioFilters(
+    String municipioNome,
+    LocalDate dataCadastro,
+    LocalDate dataCadastroInicio,
+    LocalDate dataCadastroFim,
+    LocalDate dataNascimento,
+    LocalDate dataNascimentoInicio,
+    LocalDate dataNascimentoFim
+    ) {}
+
     @Autowired
     private UsuarioRepository usuarioRepository;
 
@@ -32,9 +46,12 @@ public class UsuarioController {
 
     @GetMapping
     @Cacheable(value = "usuarios")
-    public Page<UsuarioResponse> index(@PageableDefault(size = 10) Pageable pageable) {
-        Page<Usuario> usuarios = usuarioRepository.findAll(pageable);
-        // Mapear cada Usuario para UsuarioResponse
+    public Page<UsuarioResponse> index(
+            @ModelAttribute UsuarioFilters filters,
+            @PageableDefault(size = 10) Pageable pageable) {
+
+        var specification = UsuarioSpecification.withFilters(filters);
+        Page<Usuario> usuarios = usuarioRepository.findAll(specification, pageable);
         return usuarios.map(UsuarioMapper::toResponse);
     }
 
