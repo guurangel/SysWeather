@@ -9,6 +9,7 @@
 - [🧪 Como Executar](#-como-executar)
 - [📌 Endpoints da API](#-endpoints-da-api)
 - [✅ Funcionalidades](#-funcionalidades)
+- [🗂 Estrutura do Projeto](#-estrutura-do-projeto)
 - [🗃️ Modelo de Dados](#-modelo-de-dados)
 - [👨‍💻 Nossa equipe](#-nossa-equipe)
 
@@ -142,6 +143,69 @@ Acesse o Swagger para testar os endpoints:
 - 📊 Documentação interativa via Swagger
 - 📦 Paginação e ordenação nos endpoints
 
+---
+
+## 🗂 Estrutura do Projeto
+
+```plaintext
+SYSWEATHER/
+├── .mvn/
+├── vscode/
+├── src/
+│   ├── main/
+│   │   ├── java/com/java/sysweather/
+│   │   │   ├── config/
+│   │   │   ├── controller/
+│   │   │   │   ├── MunicipioController.java
+│   │   │   │   ├── NotificacaoController.java
+│   │   │   │   ├── OcorrenciaController.java
+│   │   │   │   └── UsuarioController.java
+│   │   │   ├── dto/response/
+│   │   │   │   ├── MunicipioResumoResponse.java
+│   │   │   │   ├── NotificacaoOcorrenciaResponse.java
+│   │   │   │   ├── OcorrenciaResponse.java
+│   │   │   │   ├── OcorrenciaResumoResponse.java
+│   │   │   │   ├── UsuarioResponse.java
+│   │   │   │   └── UsuarioResumoResponse.java
+│   │   │   ├── exception/
+│   │   │   │   └── ValidationHandler.java
+│   │   │   ├── mapper/
+│   │   │   │   ├── MunicipioMapper.java
+│   │   │   │   ├── NotificacaoMapper.java
+│   │   │   │   ├── OcorrenciaMapper.java
+│   │   │   │   └── UsuarioMapper.java
+│   │   │   ├── model/
+│   │   │   │   ├── enums/
+│   │   │   │   │   ├── Clima.java
+│   │   │   │   │   ├── Estado.java
+│   │   │   │   │   ├── NivelRisco.java
+│   │   │   │   │   ├── Regiao.java
+│   │   │   │   │   └── TipoOcorrencia.java
+│   │   │   │   ├── Municipio.java
+│   │   │   │   ├── NotificacaoOcorrencia.java
+│   │   │   │   ├── Ocorrencia.java
+│   │   │   │   └── Usuario.java
+│   │   │   ├── repository/
+│   │   │   │   ├── MunicipioRepository.java
+│   │   │   │   ├── NotificacaoRepository.java
+│   │   │   │   ├── OcorrenciaRepository.java
+│   │   │   │   └── UsuarioRepository.java
+│   │   │   ├── service/
+│   │   │   │   ├── MunicipioService.java
+│   │   │   │   ├── OcorrenciaService.java
+│   │   │   │   └── UsuarioService.java
+│   │   │   ├── specification/
+│   │   │   │   ├── MunicipioSpecification.java
+│   │   │   │   └── UsuarioSpecification.java
+│   │   │   ├── App.java
+│   │   │   └── resources/
+│   │   │       ├── static/
+│   │   │       ├── templates/
+│   │   │       └── application.properties
+│   └── test/
+├── pom.xml
+└── README.md
+```
 ---
 
 ## 🗃️ Modelo de Dados
