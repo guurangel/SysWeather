@@ -10,7 +10,8 @@
 - [📌 Endpoints da API](#-endpoints-da-api)
 - [✅ Funcionalidades](#-funcionalidades)
 - [🗂 Estrutura do Projeto](#-estrutura-do-projeto)
-- [🗃️ Modelo de Dados](#-modelo-de-dados)
+- [🗃️ Modelo de Entidades](#-modelo-de-entidades)
+- [📚 Enums das Entidades](#-enums-das-entidades)
 - [👨‍💻 Nossa equipe](#-nossa-equipe)
 
 ---
@@ -105,20 +106,6 @@ Acesse o Swagger para testar os endpoints:
 
 ---
 
-### 🔔 Notificações
-
-- `GET /notificacoes` — Lista todas as notificações de eventos climáticos (ordenadas por data de envio)
-
----
-
-### ⚠️ Ocorrências
-
-- `GET /ocorrencias` — Lista ocorrências registradas com paginação
-- `POST /ocorrencias` — Cadastra uma nova ocorrência
-- `GET /ocorrencias/{id}` — Busca ocorrência por ID
-
----
-
 ### 👥 Usuários
 
 - `GET /usuarios` — Lista usuários com filtros e paginação
@@ -132,6 +119,20 @@ Acesse o Swagger para testar os endpoints:
 - `municipioNome` — nome do município associado ao usuário
 - `dataCadastro`, `dataCadastroInicio`, `dataCadastroFim` — data exata ou intervalo de cadastro
 - `dataNascimento`, `dataNascimentoInicio`, `dataNascimentoFim` — data exata ou intervalo de nascimento
+
+---
+
+### ⚠️ Ocorrências
+
+- `GET /ocorrencias` — Lista ocorrências registradas com paginação
+- `POST /ocorrencias` — Cadastra uma nova ocorrência
+- `GET /ocorrencias/{id}` — Busca ocorrência por ID
+
+---
+
+### 🔔 Notificações
+
+- `GET /notificacoes` — Lista todas as notificações de eventos climáticos (ordenadas por data de envio)
 
 ---
 
@@ -206,9 +207,12 @@ SYSWEATHER/
 ├── pom.xml
 └── README.md
 ```
+
+**Descrição:** estrutura do projeto segue uma arquitetura em camadas, organizada para garantir separação de responsabilidades. Os diretórios incluem configurações, controllers, serviços, repositórios, modelos, DTOs, tratadores de exceção, mapeadores, specifications e recursos estáticos, além do arquivo de configuração do Maven e o README.
+
 ---
 
-## 🗃️ Modelo de Dados
+## 🗃️ Modelo de Entidades
 
 ### Municipio
 
@@ -225,6 +229,8 @@ usuarios: List<Usuario>
 ocorrencias: List<Ocorrencia>
 ```
 
+**Descrição:** Representa uma cidade monitorada pelo sistema. Contém dados geográficos e demográficos, além de listas com os usuários residentes e ocorrências registradas na localidade.
+
 ### Usuario
 
 ```java
@@ -239,6 +245,8 @@ municipio: Municipio
 notificacoes: List<NotificacaoOcorrencia>
 ```
 
+**Descrição:** Representa um cidadão cadastrado na plataforma. Contém informações pessoais, vínculo com um município e histórico de notificações recebidas relacionadas a eventos climáticos.
+
 ### Ocorrencia
 ```java
 id: Long
@@ -249,6 +257,8 @@ dataOcorrencia: LocalDateTime
 municipio: Municipio
 ```
 
+**Descrição:** Representa um evento climático extremo (como enchente, tempestade etc.) ocorrido em um município específico. Possui tipo, nível de risco e data de ocorrência.
+
 ### NotificacaoOcorrencia
 ```java
 id: Long
@@ -256,6 +266,54 @@ mensagem: String
 dataEnvio: LocalDateTime
 usuario: Usuario
 ocorrencia: Ocorrencia
+```
+
+**Descrição:** Representa uma notificação enviada a um usuário sobre uma ocorrência climática. Inclui a mensagem, data de envio e os vínculos com o usuário e a ocorrência correspondente.
+
+---
+
+## 📚 Enums das Entidades
+
+### `Estado`
+Enum que representa os estados brasileiros.
+
+```java
+AC, AL, AP, AM, BA, CE, DF, ES, GO, MA,
+MT, MS, MG, PA, PB, PR, PE, PI, RJ, RN,
+RS, RO, RR, SC, SP, SE, TO
+```
+
+### `Clima`
+Enum que representa os climas.
+
+```java
+TROPICAL, SEMI_ARIDO,
+EQUATORIAL, SUBTROPICAL,
+TEMPERADO, ÁRIDO,
+MEDITERRÂNEO, CONTINENTAL
+```
+
+### `Regiao`
+Enum que representa as regiões geográficas do Brasil.
+
+```java
+NORTE, NORDESTE, CENTRO_OESTE, SUDESTE, SUL
+```
+
+### `TipoOcorrencia`
+Enum que classifica o tipo de evento climático monitorado.
+
+```java
+CHUVA_FORTE, DESLIZAMENTO,
+VENTO_FORTE, GRANIZO,
+SECA, INUNDACAO
+```
+
+### `NivelRisco`
+Enum que define o grau de severidade de uma ocorrência climática.
+
+```java
+BAIXO, MEDIO, ALTO
 ```
 
 ---
