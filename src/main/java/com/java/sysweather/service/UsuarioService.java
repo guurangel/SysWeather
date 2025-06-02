@@ -7,6 +7,7 @@ import com.java.sysweather.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -36,6 +37,11 @@ public class UsuarioService {
             usuario.setMunicipio(municipio);
         } else {
             usuario.setMunicipio(null);  // ou lance exceção se município for obrigatório
+        }
+
+        // Define automaticamente a data de cadastro se não vier preenchida
+        if (usuario.getDataCadastro() == null) {
+            usuario.setDataCadastro(LocalDateTime.now());
         }
 
         return usuarioRepository.save(usuario);

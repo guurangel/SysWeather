@@ -1,5 +1,6 @@
 package com.java.sysweather.controller;
 
+import com.java.sysweather.dto.response.MunicipioDetalhadoResponse;
 import com.java.sysweather.dto.response.MunicipioResumoResponse;
 import com.java.sysweather.mapper.MunicipioMapper;
 import com.java.sysweather.model.Municipio;
@@ -88,9 +89,9 @@ public class MunicipioController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<MunicipioResumoResponse> get(@PathVariable Long id) {
+    public ResponseEntity<MunicipioDetalhadoResponse> get(@PathVariable Long id) {
         Municipio municipio = getMunicipio(id);
-        return ResponseEntity.ok(MunicipioMapper.toResumo(municipio));
+        return ResponseEntity.ok(MunicipioMapper.toDetalhado(municipio));
     }
 
     @PutMapping("{id}")

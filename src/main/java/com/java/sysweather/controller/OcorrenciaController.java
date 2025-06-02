@@ -3,8 +3,11 @@ package com.java.sysweather.controller;
 import com.java.sysweather.dto.response.OcorrenciaResponse;
 import com.java.sysweather.mapper.OcorrenciaMapper;
 import com.java.sysweather.model.Ocorrencia;
+import com.java.sysweather.model.enums.NivelRisco;
+import com.java.sysweather.model.enums.TipoOcorrencia;
 import com.java.sysweather.repository.OcorrenciaRepository;
 import com.java.sysweather.service.OcorrenciaService;
+import com.java.sysweather.specification.OcorrenciaSpecification;
 
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -24,6 +27,12 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/ocorrencias")
 public class OcorrenciaController {
 
+    public record OcorrenciaFilters(
+    String municipioNome,
+    NivelRisco nivelRisco,
+    TipoOcorrencia tipo
+    ) {}
+
     @Autowired
     private OcorrenciaRepository ocorrenciaRepository;
 
@@ -32,9 +41,12 @@ public class OcorrenciaController {
 
     @GetMapping
     @Cacheable(value = "ocorrencias")
-    public Page<OcorrenciaResponse> index(@PageableDefault(size = 10) Pageable pageable) {
-        return ocorrenciaRepository.findAll(pageable)
-                .map(OcorrenciaMapper::toResponse);
+    public Page<OcorrenciaResponse> index(
+        @ModelAttribute OcorrenciaFilters filters,
+        @PageableDefault(size = 10) Pageable pageable
+    ) {
+        return ocorrenciaRepository.findAll(OcorrenciaSpecification.withFilters(filters), pageable)
+            .map(OcorrenciaMapper::toResponse);
     }
 
     @PostMapping

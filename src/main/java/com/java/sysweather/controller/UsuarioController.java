@@ -1,5 +1,6 @@
 package com.java.sysweather.controller;
 
+import com.java.sysweather.dto.response.UsuarioDetalhadoResponse;
 import com.java.sysweather.dto.response.UsuarioResponse;
 import com.java.sysweather.mapper.UsuarioMapper;
 import com.java.sysweather.model.Usuario;
@@ -72,7 +73,6 @@ public class UsuarioController {
                         "senha": "senha123",
                         "cpf": "12345678901",
                         "dataNascimento": "2000-01-22",
-                        "dataCadastro": "2025-06-01T15:00:00",
                         "municipio": {
                             "id": 1
                         }
@@ -87,9 +87,9 @@ public class UsuarioController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<UsuarioResponse> get(@PathVariable Long id) {
+    public ResponseEntity<UsuarioDetalhadoResponse> get(@PathVariable Long id) {
         Usuario usuario = getUsuario(id);
-        return ResponseEntity.ok(UsuarioMapper.toResponse(usuario));
+        return ResponseEntity.ok(UsuarioMapper.toDetalhado(usuario));
     }
 
     @PutMapping("{id}")
