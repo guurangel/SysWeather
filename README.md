@@ -128,6 +128,12 @@ Acesse o Swagger para testar os endpoints:
 - `POST /ocorrencias` — Cadastra uma nova ocorrência
 - `GET /ocorrencias/{id}` — Busca ocorrência por ID
 
+**Filtros disponíveis (como parâmetros da URL):**
+
+- `municipioNome` — nome do município associado ao usuário
+- `nivelRisco` — nível de risco da ocorrência
+- `TipoOcorrencia` — tipo de risco da ocorrência
+  
 ---
 
 ### 🔔 Notificações
@@ -162,12 +168,16 @@ SYSWEATHER/
 │   │   │   │   ├── OcorrenciaController.java
 │   │   │   │   └── UsuarioController.java
 │   │   │   ├── dto/response/
+│   │   │   │   ├── MunicipioDetalhadoResponse.java
 │   │   │   │   ├── MunicipioResumoResponse.java
+│   │   │   │   ├── MunicipioSimplesResponse.java
 │   │   │   │   ├── NotificacaoOcorrenciaResponse.java
 │   │   │   │   ├── OcorrenciaResponse.java
 │   │   │   │   ├── OcorrenciaResumoResponse.java
+│   │   │   │   ├── UsuarioDetalhadoResponse.java
 │   │   │   │   ├── UsuarioResponse.java
-│   │   │   │   └── UsuarioResumoResponse.java
+│   │   │   │   ├── UsuarioResumoResponse.java
+│   │   │   │   └── UsuarioSimplesResponse.java
 │   │   │   ├── exception/
 │   │   │   │   └── ValidationHandler.java
 │   │   │   ├── mapper/
@@ -197,6 +207,7 @@ SYSWEATHER/
 │   │   │   │   └── UsuarioService.java
 │   │   │   ├── specification/
 │   │   │   │   ├── MunicipioSpecification.java
+│   │   │   │   ├── OcorrenciaService.java
 │   │   │   │   └── UsuarioSpecification.java
 │   │   │   ├── App.java
 │   │   │   └── resources/
