@@ -1,4 +1,4 @@
-# 🚀 SysTrack
+# 🚀 SysWeather
 
 **SysWeather** é uma aplicação desenvolvida com **Java (Spring Boot)** para auxiliar na prevenção de eventos climáticos extremos, oferecendo filtros personalizados, paginação e ordenação de dados.
 
