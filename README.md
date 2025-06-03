@@ -68,7 +68,7 @@ Cidadãos de áreas de risco, gestores públicos municipais, Defesa Civil, agent
 git clone https://github.com/guurangel/SysWeather.git
 
 # Acesse a pasta do projeto
-cd SysTrack
+cd SysWeather
 
 # Compile o projeto
 mvn clean install
