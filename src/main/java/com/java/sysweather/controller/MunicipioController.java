@@ -9,7 +9,6 @@ import com.java.sysweather.model.enums.Regiao;
 import com.java.sysweather.repository.MunicipioRepository;
 import com.java.sysweather.service.MunicipioService;
 import com.java.sysweather.specification.MunicipioSpecification;
-
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import jakarta.validation.Valid;
