@@ -216,6 +216,7 @@ SYSWEATHER/
 │   │   │       └── application.properties
 │   └── test/
 ├── pom.xml
+├── Dockerfile
 └── README.md
 ```
 
