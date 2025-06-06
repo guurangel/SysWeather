@@ -56,10 +56,23 @@ Cidadãos de áreas de risco, gestores públicos municipais, Defesa Civil, agent
 
 ## 🧪 Como Executar
 
-### Pré-requisitos
+### ✅ Pré-requisitos
 
 - Java 17+
 - Maven 3.8+
+- Banco de Dados Oracle (ou acesso a uma instância existente)
+- Variáveis de ambiente configuradas corretamente
+
+### 🔧 Variáveis de Ambiente Necessárias
+
+Antes de executar a aplicação, configure as seguintes variáveis de ambiente (no terminal, em um arquivo `.env`, ou diretamente na sua IDE):
+
+```env
+DB_URL=jdbc:oracle:thin:@<host>:<porta>:<sid>    # Exemplo: jdbc:oracle:thin:@localhost:1521:xe
+DB_USERNAME=seu_usuario_oracle
+DB_PASSWORD=sua_senha_oracle
+PORT=8080  # Opcional, porta padrão é 8080
+```
 
 ### Passos
 
